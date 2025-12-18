@@ -1,0 +1,14 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+source "$SCRIPT_DIR/const.sh"
+
+# Check if the user is in a git repository
+if [[ ! -d .git ]]; then
+    echo "Not in the root of a Git repository. Aborting."
+    exit 1
+fi
+
+# Perform a git push with authentication
+# Pass any arguments of this script to git push
+git -c http.extraHeader="Authorization: Basic $(echo -n "$USERNAME:$PASSWORD" | base64)" push "$@"

@@ -1,0 +1,68 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+source "$SCRIPT_DIR/const.sh"
+
+clean-repo() {
+    git checkout .
+    git clean -fd
+    echo "Changes removed."
+}
+
+input=""
+
+if [[ "$1" == "lfs" ]]; then
+
+    current_cwd=$(pwd)
+    echo "This will discard all unsaved changes in:"
+    echo 
+    echo "    - LunarFlame-Website"
+    echo "    - Static-Files"
+    echo 
+
+    read -p "Are you sure? [yn]: " input
+
+    #This is zsh code
+    #read "input?Are you sure? [yn]: "
+
+    if [[ "$input" == "y" ]]; then
+        # Get LFS directory from const.sh
+        cd "$LFS_DIR/LunarFlame-Website"
+        echo
+        echo "LunarFlame-Website:"
+        clean-repo
+
+        cd "$LFS_DIR/Static-Files"
+        echo
+        echo "Static-Files:"
+        clean-repo
+    else
+        echo "Aborted."
+    fi
+
+    cd "$current_cwd"
+
+# If in root of git repo, ask for confirmation to clean
+elif [[ -d .git ]]; then
+
+    if [[ "$1" == "-y" ]]; then
+        clean-repo
+    else
+        echo "This will discard all unsaved changes. You must be in the root of the repo to do this."
+        read -p "Are you sure? [yn]: " input
+
+        #This is zsh code
+        #read "input?Are you sure? [yn]: "
+        
+        if [[ "$input" == "y" ]]; then
+            clean-repo
+        else
+            echo "Aborted."
+        fi
+    fi
+
+else
+    echo "Not in the root of a Git repository. Aborting."
+    exit 1
+fi
+

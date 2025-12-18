@@ -1,0 +1,22 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+source "$SCRIPT_DIR/const.sh"
+
+# Check if a repository is provided
+if [[ -z "$1" ]]; then
+    echo "Usage: git tclone <repository-name>"
+    exit 1
+fi
+
+# tclone should only take the repository name, not the full URL.
+# Check if the provided argument looks like a full URL
+if [[ "$1" == http*://* || "$1" == git@*:* ]]; then
+    echo "Please provide only the repository name, not the full URL."
+    echo "Example: git tclone Organization/Repository.git"
+    exit 1
+fi
+
+# Perform a git clone with authentication
+git -c http.extraHeader="Authorization: Basic $(echo -n "$USERNAME:$PASSWORD" | base64)" clone "${GITEA_URL}/$1"
+

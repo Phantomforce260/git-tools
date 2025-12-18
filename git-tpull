@@ -1,0 +1,16 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+source "$SCRIPT_DIR/const.sh"
+
+# Check if the user is in a git repository
+if [[ ! -d .git ]]; then
+    echo "Not in the root of a Git repository. Aborting."
+    exit 1
+fi
+
+# Get the current repository URL
+REPO_URL=$(git config --get remote.origin.url)
+
+# Perform a git pull with authentication
+git -c http.extraHeader="Authorization: Basic $(echo -n "$USERNAME:$PASSWORD" | base64)" pull "$REPO_URL"
