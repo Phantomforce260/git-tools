@@ -1,9 +1,10 @@
 #!/bin/bash
 
-TOOLS_DIR="$HOME/Documents/Github/Phantom/git-tools"
+TOOLS_DIR=$(dirname "$(realpath "$0")")
 USERNAME=$(<"$TOOLS_DIR/username.txt")
 PASSWORD=$(<"$TOOLS_DIR/password.txt")
 
-LFS_DIR="$HOME/Documents/Gitea/LFS"
-
 GITEA_URL="https://git.lunarflame.dev"
+GITEA_DIR=$(<"$TOOLS_DIR/gitea_dir.txt")
+
+LFS_DIR="${GITEA_DIR}/LFS"
