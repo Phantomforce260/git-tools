@@ -1,5 +1,33 @@
-fun cleanRepo() {
-    git checkout .
-    git clean -fd
+import { input_prompt } from "std/env"
+import { lowercase, trim } from "std/text"
+
+fun clean_repo() {
+    trust {
+        $ git checkout . $
+        $ git clean -fd $
+    }
     echo "Changes removed."
+}
+
+main(args) {
+    let repo_root = $ git rev-parse --show-toplevel $ failed {
+        echo "Not inside a Git repository. Aborting."
+        exit 1
+    }
+
+    $ cd {trim(repo_root)} $?
+
+    let force = len(args) > 0 and args[0] == "-y"
+
+    if not force {
+        echo "This will permanently discard ALL uncommitted changes."
+        let input = input_prompt("Are you sure? [y/N]: ")
+
+        if lowercase(input) != "y" {
+            echo "Aborted."
+            exit 0
+        }
+    }
+
+    clean_repo()
 }

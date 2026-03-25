@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Written in [Amber](https://amber-lang.com/)
+# version: 0.5.1-alpha
+# We cannot import `bash_version` from `env.ab` because it imports `text.ab` making a circular dependency.
+# This is a workaround to avoid that issue and the import system should be improved in the future.
+trim_left__9_v0() {
+    local text=$1
+    ret_trim_left9_v0="$(echo "${text}" | sed -e 's/^[[:space:]]*//')"
+    return 0
+}
+
+trim_right__10_v0() {
+    local text=$1
+    ret_trim_right10_v0="$(echo "${text}" | sed -e 's/[[:space:]]*$//')"
+    return 0
+}
+
+trim__11_v0() {
+    local text=$1
+    trim_right__10_v0 "${text}"
+    ret_trim_right10_v0__178_22="${ret_trim_right10_v0}"
+    trim_left__9_v0 "${ret_trim_right10_v0__178_22}"
+    ret_trim11_v0="${ret_trim_left9_v0}"
+    return 0
+}
+
+lowercase__12_v0() {
+    local text=$1
+    ret_lowercase12_v0="$(echo "${text}" | tr '[:upper:]' '[:lower:]')"
+    return 0
+}
+
+input_prompt__101_v0() {
+    local prompt=$1
+    read -p "$prompt"
+    ret_input_prompt101_v0="$(echo $REPLY)"
+    return 0
+}
+
+clean_repo__121_v0() {
+    git checkout .
+    git clean -fd
+    echo "Changes removed."
+}
+
+declare -r args_3=("$0" "$@")
+command_5="$(git rev-parse --show-toplevel)"
+__status=$?
+if [ "${__status}" != 0 ]; then
+    echo "Not inside a Git repository. Aborting."
+    exit 1
+fi
+repo_root_4="${command_5}"
+trim__11_v0 "${repo_root_4}"
+ret_trim11_v0__18_11="${ret_trim11_v0}"
+cd ${ret_trim11_v0__18_11}
+__status=$?
+if [ "${__status}" != 0 ]; then
+    exit "${__status}"
+fi
+__length_6=("${args_3[@]}")
+force_5="$(( $(( ${#__length_6[@]} > 0 )) && $([ "_${args_3[0]}" != "_-y" ]; echo $?) ))"
+if [ "$(( ! ${force_5} ))" != 0 ]; then
+    echo "This will permanently discard ALL uncommitted changes."
+    input_prompt__101_v0 "Are you sure? [y/N]: "
+    input_6="${ret_input_prompt101_v0}"
+    lowercase__12_v0 "${input_6}"
+    ret_lowercase12_v0__26_12="${ret_lowercase12_v0}"
+    if [ "$([ "_${ret_lowercase12_v0__26_12}" == "_y" ]; echo $?)" != 0 ]; then
+        echo "Aborted."
+        exit 0
+    fi
+fi
+clean_repo__121_v0 

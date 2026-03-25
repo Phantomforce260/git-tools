@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+# Written in [Amber](https://amber-lang.com/)
+# version: 0.5.1-alpha
+# We cannot import `bash_version` from `env.ab` because it imports `text.ab` making a circular dependency.
+# This is a workaround to avoid that issue and the import system should be improved in the future.
+split__5_v0() {
+    local text=$1
+    local delimiter=$2
+    result_14=()
+    IFS="${delimiter}" read -rd '' -a result_14 < <(printf %s "$text")
+    ret_split5_v0=("${result_14[@]}")
+    return 0
+}
+
+trim_left__9_v0() {
+    local text=$1
+    ret_trim_left9_v0="$(echo "${text}" | sed -e 's/^[[:space:]]*//')"
+    return 0
+}
+
+trim_right__10_v0() {
+    local text=$1
+    ret_trim_right10_v0="$(echo "${text}" | sed -e 's/[[:space:]]*$//')"
+    return 0
+}
+
+trim__11_v0() {
+    local text=$1
+    trim_right__10_v0 "${text}"
+    ret_trim_right10_v0__178_22="${ret_trim_right10_v0}"
+    trim_left__9_v0 "${ret_trim_right10_v0__178_22}"
+    ret_trim11_v0="${ret_trim_left9_v0}"
+    return 0
+}
+
+text_contains__17_v0() {
+    local source=$1
+    local search=$2
+    result_19="$(if [[ "${source}" == *"${search}"* ]]; then
+    echo 1
+  fi)"
+    ret_text_contains17_v0="$([ "_${result_19}" != "_1" ]; echo $?)"
+    return 0
+}
+
+slice__25_v0() {
+    local text=$1
+    local index=$2
+    local length=$3
+    if [ "$(( ${length} == 0 ))" != 0 ]; then
+        __length_4="${text}"
+        length="$(( ${#__length_4} - ${index} ))"
+    fi
+    if [ "$(( ${length} <= 0 ))" != 0 ]; then
+        ret_slice25_v0=""
+        return 0
+    fi
+    ret_slice25_v0="$(printf "%.${length}s" "${text: ${index}}")"
+    return 0
+}
+
+char_at__26_v0() {
+    local text=$1
+    local index=$2
+    ret_char_at26_v0="$(printf "%.1s" "${text: ${index}}")"
+    return 0
+}
+
+__GREEN_3="\\033[0;32m"
+__YELLOW_4="\\033[0;33m"
+__RED_5="\\033[0;31m"
+__NC_6="\\033[0m"
+print_section__37_v0() {
+    local title=$1
+    local color=$2
+    local symbol=$3
+    local files=("${!4}")
+    __length_7=("${files[@]}")
+    echo -e "    ${#__length_7[@]} ${color}:${title}" ${__NC_6}
+    __length_8=("${files[@]}")
+    if [ "$(( ${#__length_8[@]} > 0 ))" != 0 ]; then
+        for file_20 in "${files[@]}"; do
+            echo "        ${symbol} ${file_20}"
+        done
+    else
+        echo "        (none)"
+    fi
+}
+
+declare -r args_7=("$0" "$@")
+command_10="$(git rev-parse --show-toplevel)"
+__status=$?
+if [ "${__status}" != 0 ]; then
+    echo "Not inside a Git repository. Aborting."
+    exit 1
+fi
+repo_root_8="${command_10}"
+trim__11_v0 "${repo_root_8}"
+ret_trim11_v0__26_11="${ret_trim11_v0}"
+cd ${ret_trim11_v0__26_11}
+__status=$?
+if [ "${__status}" != 0 ]; then
+    exit "${__status}"
+fi
+command_11="$(basename ${repo_root_8})"
+__status=$?
+if [ "${__status}" != 0 ]; then
+    echo "Failed to determine repository name."
+    exit 1
+fi
+repo_name_9="${command_11}"
+git add .
+__status=$?
+command_12="$(git status --porcelain -M)"
+__status=$?
+changes_10="${command_12}"
+added_files_11=()
+modified_files_12=()
+deleted_files_13=()
+split__5_v0 "${changes_10}" "
+"
+ret_split5_v0__41_17=("${ret_split5_v0[@]}")
+for line_15 in "${ret_split5_v0__41_17[@]}"; do
+    trim__11_v0 "${line_15}"
+    ret_trim11_v0__42_12="${ret_trim11_v0}"
+    if [ "$([ "_${ret_trim11_v0__42_12}" != "_" ]; echo $?)" != 0 ]; then
+        continue
+    fi
+    slice__25_v0 "${line_15}" 0 2
+    file_status_16="${ret_slice25_v0}"
+    slice__25_v0 "${line_15}" 3 0
+    entry_17="${ret_slice25_v0}"
+    char_at__26_v0 "${file_status_16}" 0
+    ret_char_at26_v0__50_13="${ret_char_at26_v0}"
+    text_contains__17_v0 "${file_status_16}" "A"
+    ret_text_contains17_v0__56_13="${ret_text_contains17_v0}"
+    text_contains__17_v0 "${file_status_16}" "M"
+    ret_text_contains17_v0__57_13="${ret_text_contains17_v0}"
+    text_contains__17_v0 "${file_status_16}" "D"
+    ret_text_contains17_v0__58_13="${ret_text_contains17_v0}"
+    if [ "$([ "_${ret_char_at26_v0__50_13}" != "_R" ]; echo $?)" != 0 ]; then
+        split__5_v0 "${entry_17}" " -> "
+        parts_18=("${ret_split5_v0[@]}")
+        __length_16=("${parts_18[@]}")
+        if [ "$(( ${#__length_16[@]} == 2 ))" != 0 ]; then
+            modified_files_12+=("${parts_18[0]} --> ${parts_18[1]}")
+        fi
+    elif [ "${ret_text_contains17_v0__56_13}" != 0 ]; then
+        added_files_11+=("${entry_17}")
+    elif [ "${ret_text_contains17_v0__57_13}" != 0 ]; then
+        modified_files_12+=("${entry_17}")
+    elif [ "${ret_text_contains17_v0__58_13}" != 0 ]; then
+        deleted_files_13+=("${entry_17}")
+    fi
+done
+git restore --staged .
+__status=$?
+trim__11_v0 "${repo_name_9}"
+ret_trim11_v0__64_12="${ret_trim11_v0}"
+echo "${ret_trim11_v0__64_12}"
+print_section__37_v0 "Added Files" "${__GREEN_3}" "+" added_files_11[@]
+print_section__37_v0 "Modified Files" "${__YELLOW_4}" "~" modified_files_12[@]
+print_section__37_v0 "Deleted Files" "${__RED_5}" "-" deleted_files_13[@]

@@ -1,0 +1,69 @@
+import { trim, split, lowercase, slice, char_at, text_contains } from "std/text"
+
+const GREEN = "\\033[0;32m"
+const YELLOW = "\\033[0;33m"
+const RED = "\\033[0;31m"
+const NC = "\\033[0m"
+
+fun print_section(title: Text, color: Text, symbol: Text, files: [Text]) {
+    trust $ echo -e "    {len(files)} {color}{title}:{NC}" $
+
+    if len(files) > 0 {
+        for file in files {
+            echo "        {symbol} {file}"
+        }
+    } else {
+        echo "        (none)"
+    }
+}
+
+main(args) {
+    let repo_root = $ git rev-parse --show-toplevel $ failed {
+        echo "Not inside a Git repository. Aborting."
+        exit 1
+    }
+
+    $ cd {trim(repo_root)} $?
+
+    let repo_name = $ basename {repo_root} $ failed {
+        echo "Failed to determine repository name."
+        exit 1
+    }
+
+    trust $ git add . $
+
+    let changes = trust $ git status --porcelain -M $
+
+    let added_files = [Text]
+    let modified_files = [Text]
+    let deleted_files = [Text]
+
+    for line in split(changes, "\n") {
+        if trim(line) == "" {
+            continue
+        }
+
+        let file_status = slice(line, 0, 2)
+        let entry = slice(line, 3)
+
+        if {
+            char_at(file_status, 0) == "R" {
+                let parts = split(entry, " -> ")
+                if len(parts) == 2 {
+                    modified_files += ["{parts[0]} --> {parts[1]}"]
+                }
+            }
+            text_contains(file_status, "A"): added_files += [entry]
+            text_contains(file_status, "M"): modified_files += [entry]
+            text_contains(file_status, "D"): deleted_files += [entry]
+        }
+    }
+
+    trust $ git restore --staged . $
+
+    echo "{trim(repo_name)}"
+
+    print_section("Added Files", GREEN, "+", added_files)
+    print_section("Modified Files", YELLOW, "~", modified_files)
+    print_section("Deleted Files", RED, "-", deleted_files)
+}
