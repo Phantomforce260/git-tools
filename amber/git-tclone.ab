@@ -1,0 +1,31 @@
+import { starts_with } from "std/text"
+import { username, password, gitea_url } from "const.ab"
+
+main(args) {
+
+    if len(args) < 2 {
+        echo "Usage: git tclone <repository-name>"
+        exit 1
+    }
+
+    // tclone should only take the repository name, not the full URL.
+    // Check if the provided argument looks like a full URL
+    if starts_with(args[1], "https://") or starts_with(args[1], "git@") {
+        echo "Please provide only the repository name, not the full URL."
+        echo "Example: git tclone Organization/Repository.git"
+        exit 1
+    }
+
+    const username = username() failed {
+        echo "Could not read username."
+    }
+
+    const password = password() failed {
+        echo "Could not read password."
+    }
+
+    const login_key = trust $ echo -n "{username}:{password}" | base64 $
+    $ git -c http.extraHeader="Authorization: Basic {login_key}" clone {gitea_url()}/{args[1]} $ succeeded {
+        exit 0
+    }
+}

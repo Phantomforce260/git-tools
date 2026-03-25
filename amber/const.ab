@@ -1,0 +1,23 @@
+import { file_read } from "std/fs"
+
+const path = "/home/adrian/.config/git-tools"
+
+pub fun repo_root() {
+    return $ git rev-parse --show-toplevel $?
+}
+
+pub fun username() {
+    return file_read("{path}/secrets/username.txt")?
+}
+
+pub fun password() {
+    return file_read("{path}/secrets/password.txt")?
+}
+
+pub fun gitea_dir() {
+    return file_read("{path}/secrets/gitea_dir.txt")?
+}
+
+pub fun gitea_url() {
+    return "https://git.lunarflame.dev"
+}
