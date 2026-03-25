@@ -61,7 +61,7 @@ slice__25_v0() {
 declare -r args_3=("$0" "$@")
 remote_url_4="$(git remote get-url origin)"
 browser_url_5=""
-browser_6="google-chrome-stable"
+browser_6="xdg-open"
 starts_with__23_v0 "${remote_url_4}" "https://"
 ret_starts_with23_v0__12_9="${ret_starts_with23_v0}"
 starts_with__23_v0 "${remote_url_4}" "ssh:"

@@ -6,7 +6,7 @@ main(args) {
 
     let browser_url = ""
 
-    const browser = "google-chrome-stable"
+    const browser = "xdg-open"
 
     if {
         starts_with(remote_url, "https://"): browser_url = remote_url
