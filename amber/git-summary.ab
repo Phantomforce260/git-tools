@@ -10,7 +10,6 @@ fun print_section(title: Text, color: Text, symbol: Text, files: [Text]) {
 
     let title_str = join(
         [
-            "    ",
             "{len(files)}",
             " ",
             color,
@@ -20,7 +19,7 @@ fun print_section(title: Text, color: Text, symbol: Text, files: [Text]) {
         ],
         ""
     )
-    trust $ echo -e {title_str} $
+    trust $ echo -e "    {title_str}" $
 
     if len(files) > 0 {
         for file in files {
