@@ -1,4 +1,5 @@
-import { trim, split, lowercase, slice, char_at, text_contains } from "std/text"
+import { trim, split, lowercase, slice, char_at, text_contains, join } from "std/text"
+import { repo_root } from "const.ab"
 
 const GREEN = "\\033[0;32m"
 const YELLOW = "\\033[0;33m"
@@ -6,7 +7,20 @@ const RED = "\\033[0;31m"
 const NC = "\\033[0m"
 
 fun print_section(title: Text, color: Text, symbol: Text, files: [Text]) {
-    trust $ echo -e "    {len(files)} {color}{title}:{NC}" $
+
+    let title_str = join(
+        [
+            "    ",
+            "{len(files)}",
+            " ",
+            color,
+            title,
+            ":",
+            NC
+        ],
+        ""
+    )
+    trust $ echo -e {title_str} $
 
     if len(files) > 0 {
         for file in files {
@@ -18,7 +32,7 @@ fun print_section(title: Text, color: Text, symbol: Text, files: [Text]) {
 }
 
 main(args) {
-    let repo_root = $ git rev-parse --show-toplevel $ failed {
+    let repo_root = repo_root() failed {
         echo "Not inside a Git repository. Aborting."
         exit 1
     }

@@ -1,0 +1,25 @@
+import { trim } from "std/text"
+import { username, password, gitea_url, repo_root } from "const.ab"
+
+main(args) {
+    let repo_root = repo_root() failed {
+        echo "Not inside a Git repository. Aborting."
+        exit 1
+    }
+
+    $ cd {trim(repo_root)} $?
+
+    const username = username() failed {
+        echo "Could not read username."
+    }
+
+    const password = password() failed {
+        echo "Could not read password."
+    }
+
+    const login_key = trust $ echo -n "{username}:{password}" | base64 $
+
+    $ git -c http.extraHeader="Authorization: Basic {login_key}" pull {args} $ succeeded {
+        exit 0
+    }
+}

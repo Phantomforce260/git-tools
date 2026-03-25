@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+# Written in [Amber](https://amber-lang.com/)
+# version: 0.5.1-alpha
+# We cannot import `bash_version` from `env.ab` because it imports `text.ab` making a circular dependency.
+# This is a workaround to avoid that issue and the import system should be improved in the future.
+trim_left__9_v0() {
+    local text=$1
+    command_0="$(echo "${text}" | sed -e 's/^[[:space:]]*//')"
+    __status=$?
+    ret_trim_left9_v0="${command_0}"
+    return 0
+}
+
+trim_right__10_v0() {
+    local text=$1
+    command_1="$(echo "${text}" | sed -e 's/[[:space:]]*$//')"
+    __status=$?
+    ret_trim_right10_v0="${command_1}"
+    return 0
+}
+
+trim__11_v0() {
+    local text=$1
+    trim_right__10_v0 "${text}"
+    ret_trim_right10_v0__178_22="${ret_trim_right10_v0}"
+    trim_left__9_v0 "${ret_trim_right10_v0__178_22}"
+    ret_trim11_v0="${ret_trim_left9_v0}"
+    return 0
+}
+
+file_read__39_v0() {
+    local path=$1
+    command_2="$(< "${path}")"
+    __status=$?
+    if [ "${__status}" != 0 ]; then
+        ret_file_read39_v0=''
+        return "${__status}"
+    fi
+    ret_file_read39_v0="${command_2}"
+    return 0
+}
+
+path_3="/home/adrian/.config/git-tools"
+repo_root__53_v0() {
+    command_3="$(git rev-parse --show-toplevel)"
+    __status=$?
+    if [ "${__status}" != 0 ]; then
+        ret_repo_root53_v0=''
+        return "${__status}"
+    fi
+    ret_repo_root53_v0="${command_3}"
+    return 0
+}
+
+username__54_v0() {
+    file_read__39_v0 "${path_3}/secrets/username.txt"
+    __status=$?
+    if [ "${__status}" != 0 ]; then
+        ret_username54_v0=''
+        return "${__status}"
+    fi
+    ret_username54_v0="${ret_file_read39_v0}"
+    return 0
+}
+
+password__55_v0() {
+    file_read__39_v0 "${path_3}/secrets/password.txt"
+    __status=$?
+    if [ "${__status}" != 0 ]; then
+        ret_password55_v0=''
+        return "${__status}"
+    fi
+    ret_password55_v0="${ret_file_read39_v0}"
+    return 0
+}
+
+declare -r args_4=("$0" "$@")
+repo_root__53_v0 
+__status=$?
+if [ "${__status}" != 0 ]; then
+    echo "Not inside a Git repository. Aborting."
+    exit 1
+fi
+repo_root_5="${ret_repo_root53_v0}"
+trim__11_v0 "${repo_root_5}"
+ret_trim11_v0__10_11="${ret_trim11_v0}"
+cd ${ret_trim11_v0__10_11}
+__status=$?
+if [ "${__status}" != 0 ]; then
+    exit "${__status}"
+fi
+username__54_v0 
+__status=$?
+if [ "${__status}" != 0 ]; then
+    echo "Could not read username."
+fi
+username_6="${ret_username54_v0}"
+password__55_v0 
+__status=$?
+if [ "${__status}" != 0 ]; then
+    echo "Could not read password."
+fi
+password_7="${ret_password55_v0}"
+command_5="$(echo -n "${username_6}:${password_7}" | base64)"
+__status=$?
+login_key_8="${command_5}"
+git -c http.extraHeader="Authorization: Basic ${login_key_8}" push ${args_4[@]}
+__status=$?
+if [ "${__status}" = 0 ]; then
+    exit 0
+fi

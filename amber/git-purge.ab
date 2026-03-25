@@ -1,5 +1,6 @@
 import { input_prompt } from "std/env"
 import { lowercase, trim } from "std/text"
+import { repo_root } from "const.ab"
 
 fun clean_repo() {
     trust {
@@ -10,7 +11,7 @@ fun clean_repo() {
 }
 
 main(args) {
-    let repo_root = $ git rev-parse --show-toplevel $ failed {
+    let repo_root = repo_root() failed {
         echo "Not inside a Git repository. Aborting."
         exit 1
     }
