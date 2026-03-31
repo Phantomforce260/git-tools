@@ -28,88 +28,121 @@ trim__11_v0() {
     return 0
 }
 
-file_read__39_v0() {
+array_shift__40_v0() {
+    local array=$1
+    eval "local array_deref_10=(\"\${${array}[@]}\")"
+    __length_2=("${array_deref_10[@]}")
+    length_10="${#__length_2[@]}"
+    if [ "$(( ${length_10} == 0 ))" != 0 ]; then
+        ret_array_shift40_v0=''
+        return 1
+    fi
+    eval "local array_deref_11=\"\${${array}[0]}\""
+    element_11="${array_deref_11}"
+    slice_upper_3="${length_10}"
+    slice_offset_4=1
+    slice_offset_4=$((${slice_offset_4} > 0 ? ${slice_offset_4} : 0))
+    slice_length_5="$(echo "${slice_upper_3}" '-' "${slice_offset_4}" | bc -l | sed '/\./ s/\.\{0,1\}0\{1,\}$//')"
+    slice_length_5=$((${slice_length_5} > 0 ? ${slice_length_5} : 0))
+    eval "local array_deref_12=(\"\${${array}[@]:\${slice_offset_4}:\${slice_length_5}}\")"
+    eval "${array}=(\"\${array_deref_12[@]}\")"
+    ret_array_shift40_v0="${element_11}"
+    return 0
+}
+
+file_read__50_v0() {
     local path=$1
-    command_2="$(< "${path}")"
+    command_6="$(< "${path}")"
     __status=$?
     if [ "${__status}" != 0 ]; then
-        ret_file_read39_v0=''
+        ret_file_read50_v0=''
         return "${__status}"
     fi
-    ret_file_read39_v0="${command_2}"
+    ret_file_read50_v0="${command_6}"
     return 0
 }
 
 path_3="/home/adrian/.config/git-tools"
-err__53_v0() {
+err__64_v0() {
     local message=$1
     echo "${message}"
     exit 1
 }
 
-repo_root__55_v0() {
-    command_3="$(git rev-parse --show-toplevel >/dev/null 2>&1)"
+repo_root__66_v0() {
+    command_7="$(git rev-parse --show-toplevel)"
     __status=$?
     if [ "${__status}" != 0 ]; then
-        ret_repo_root55_v0=''
+        ret_repo_root66_v0=''
         return "${__status}"
     fi
-    ret_repo_root55_v0="${command_3}"
+    ret_repo_root66_v0="${command_7}"
     return 0
 }
 
-username__56_v0() {
-    file_read__39_v0 "${path_3}/secrets/username.txt"
+username__67_v0() {
+    file_read__50_v0 "${path_3}/secrets/username.txt"
     __status=$?
     if [ "${__status}" != 0 ]; then
-        ret_username56_v0=''
+        ret_username67_v0=''
         return "${__status}"
     fi
-    ret_username56_v0="${ret_file_read39_v0}"
+    ret_username67_v0="${ret_file_read50_v0}"
     return 0
 }
 
-password__57_v0() {
-    file_read__39_v0 "${path_3}/secrets/password.txt"
+password__68_v0() {
+    file_read__50_v0 "${path_3}/secrets/password.txt"
     __status=$?
     if [ "${__status}" != 0 ]; then
-        ret_password57_v0=''
+        ret_password68_v0=''
         return "${__status}"
     fi
-    ret_password57_v0="${ret_file_read39_v0}"
+    ret_password68_v0="${ret_file_read50_v0}"
+    return 0
+}
+
+git_auth__71_v0() {
+    local login_key=$1
+    ret_git_auth71_v0="http.extraHeader=Authorization: Basic ${login_key}"
     return 0
 }
 
 declare -r args_4=("$0" "$@")
-repo_root__55_v0 
+repo_root__66_v0 
 __status=$?
 if [ "${__status}" != 0 ]; then
-    err__53_v0 "Not inside a Git repository. Aborting."
+    err__64_v0 "Not inside a Git repository. Aborting."
 fi
-repo_root_5="${ret_repo_root55_v0}"
+repo_root_5="${ret_repo_root66_v0}"
 trim__11_v0 "${repo_root_5}"
-ret_trim11_v0__8_11="${ret_trim11_v0}"
-cd ${ret_trim11_v0__8_11}
+ret_trim11_v0__9_11="${ret_trim11_v0}"
+cd ${ret_trim11_v0__9_11}
 __status=$?
 if [ "${__status}" != 0 ]; then
     exit "${__status}"
 fi
-username__56_v0 
+username__67_v0 
 __status=$?
 if [ "${__status}" != 0 ]; then
-    err__53_v0 "Could not read username."
+    err__64_v0 "Could not read username."
 fi
-username_6="${ret_username56_v0}"
-password__57_v0 
+username_6="${ret_username67_v0}"
+password__68_v0 
 __status=$?
 if [ "${__status}" != 0 ]; then
-    err__53_v0 "Could not read password."
+    err__64_v0 "Could not read password."
 fi
-password_7="${ret_password57_v0}"
-command_5="$(echo -n "${username_6}:${password_7}" | base64)"
+password_7="${ret_password68_v0}"
+command_9="$(echo -n "${username_6}:${password_7}" | base64)"
 __status=$?
-login_key_8="${command_5}"
-git -c http.extraHeader="Authorization: Basic ${login_key_8}" pull ${args_4[@]}
+login_key_8="${command_9}"
+git_args_9=("${args_4[@]}")
+array_shift__40_v0 "git_args_9"
+__status=$?
+git_auth__71_v0 "${login_key_8}"
+ret_git_auth71_v0__22_16="${ret_git_auth71_v0}"
+git -c "${ret_git_auth71_v0__22_16}" pull ${git_args_9[@]}
 __status=$?
 if [ "${__status}" = 0 ]; then
     exit 0

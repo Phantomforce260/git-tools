@@ -13,7 +13,7 @@ pub fun cancel(message: Text) {
 }
 
 pub fun repo_root() {
-    return silent $ git rev-parse --show-toplevel $?
+    return $ git rev-parse --show-toplevel $?
 }
 
 pub fun username() {
@@ -30,4 +30,8 @@ pub fun gitea_dir() {
 
 pub fun gitea_url() {
     return "https://git.lunarflame.dev"
+}
+
+pub fun git_auth(login_key: Text) {
+    return "http.extraHeader=Authorization: Basic {login_key}"
 }

@@ -93,7 +93,7 @@ err__59_v0() {
 }
 
 repo_root__61_v0() {
-    command_8="$(git rev-parse --show-toplevel >/dev/null 2>&1)"
+    command_8="$(git rev-parse --show-toplevel)"
     __status=$?
     if [ "${__status}" != 0 ]; then
         ret_repo_root61_v0=''
@@ -107,7 +107,7 @@ __GREEN_4="\\033[0;32m"
 __YELLOW_5="\\033[0;33m"
 __RED_6="\\033[0;31m"
 __NC_7="\\033[0m"
-print_section__68_v0() {
+print_section__69_v0() {
     local title=$1
     local color=$2
     local symbol=$3
@@ -205,6 +205,6 @@ ret_trim11_v0__72_12="${ret_trim11_v0}"
 trim__11_v0 "${branch_name_11}"
 ret_trim11_v0__72_31="${ret_trim11_v0}"
 echo "${ret_trim11_v0__72_12} (${ret_trim11_v0__72_31})"
-print_section__68_v0 "Added Files" "${__GREEN_4}" "+" added_files_13[@]
-print_section__68_v0 "Modified Files" "${__YELLOW_5}" "~" modified_files_14[@]
-print_section__68_v0 "Deleted Files" "${__RED_6}" "-" deleted_files_15[@]
+print_section__69_v0 "Added Files" "${__GREEN_4}" "+" added_files_13[@]
+print_section__69_v0 "Modified Files" "${__YELLOW_5}" "~" modified_files_14[@]
+print_section__69_v0 "Deleted Files" "${__RED_6}" "-" deleted_files_15[@]

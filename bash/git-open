@@ -74,7 +74,7 @@ err__125_v0() {
 }
 
 repo_root__127_v0() {
-    command_6="$(git rev-parse --show-toplevel >/dev/null 2>&1)"
+    command_6="$(git rev-parse --show-toplevel)"
     __status=$?
     if [ "${__status}" != 0 ]; then
         ret_repo_root127_v0=''
@@ -96,12 +96,12 @@ remote_url_5="${command_8}"
 browser_url_6=""
 browser_7="xdg-open"
 starts_with__23_v0 "${remote_url_5}" "https://"
-ret_starts_with23_v0__18_9="${ret_starts_with23_v0}"
+ret_starts_with23_v0__17_9="${ret_starts_with23_v0}"
 starts_with__23_v0 "${remote_url_5}" "ssh:"
-ret_starts_with23_v0__19_9="${ret_starts_with23_v0}"
-if [ "${ret_starts_with23_v0__18_9}" != 0 ]; then
+ret_starts_with23_v0__18_9="${ret_starts_with23_v0}"
+if [ "${ret_starts_with23_v0__17_9}" != 0 ]; then
     browser_url_6="${remote_url_5}"
-elif [ "${ret_starts_with23_v0__19_9}" != 0 ]; then
+elif [ "${ret_starts_with23_v0__18_9}" != 0 ]; then
     split__5_v0 "${remote_url_5}" "/"
     components_10=("${ret_split5_v0[@]}")
     domain_11="${components_10[2]}"
@@ -109,13 +109,13 @@ elif [ "${ret_starts_with23_v0__19_9}" != 0 ]; then
     repo_13="${components_10[4]}"
     lf_git_14="git.lunarflame.dev"
     text_contains__17_v0 "${domain_11}" "${lf_git_14}"
-    ret_text_contains17_v0__27_16="${ret_text_contains17_v0}"
-    if [ "${ret_text_contains17_v0__27_16}" != 0 ]; then
+    ret_text_contains17_v0__26_16="${ret_text_contains17_v0}"
+    if [ "${ret_text_contains17_v0__26_16}" != 0 ]; then
         domain_11="${lf_git_14}"
     fi
     ends_with__24_v0 "${repo_13}" ".git"
-    ret_ends_with24_v0__30_16="${ret_ends_with24_v0}"
-    if [ "${ret_ends_with24_v0__30_16}" != 0 ]; then
+    ret_ends_with24_v0__29_16="${ret_ends_with24_v0}"
+    if [ "${ret_ends_with24_v0__29_16}" != 0 ]; then
         __length_9="${repo_13}"
         slice__25_v0 "${repo_13}" 0 "$(( ${#__length_9} - 4 ))"
         repo_13="${ret_slice25_v0}"

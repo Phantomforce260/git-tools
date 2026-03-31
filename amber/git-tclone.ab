@@ -1,5 +1,5 @@
 import { starts_with, join } from "std/text"
-import { username, password, gitea_url, err } from "const.ab"
+import * from "const.ab"
 
 main(args) {
 
@@ -21,6 +21,6 @@ main(args) {
         err("Could not read password.")
 
     const login_key = trust $ echo -n "{username}:{password}" | base64 $
-    $ git -c http.extraHeader="Authorization: Basic {login_key}" clone {gitea_url()}/{args[1]} $ succeeded:
+    $ git -c "{git_auth(login_key)}" clone {gitea_url()}/{args[1]} $ succeeded:
         exit 0
 }

@@ -14,12 +14,17 @@ main(args) {
     let repo_root = repo_root() failed:
         err("Not inside a Git repository. Aborting.")
 
+    echo repo_root
+
+    let repo_name = $ basename {repo_root} $ failed:
+        err("Failed to determine repository name.")
+
     $ cd {trim(repo_root)} $?
 
     let force = len(args) > 0 and args[0] == "-y"
 
     if not force {
-        echo "This will permanently discard ALL uncommitted changes from {repo_root}."
+        echo "This will permanently discard ALL uncommitted changes from {repo_name}."
         let input = input_prompt("Are you sure? [y/N]: ")
 
         if lowercase(input) != "y": cancel("Aborted.")

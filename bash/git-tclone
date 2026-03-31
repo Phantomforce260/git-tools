@@ -70,6 +70,12 @@ gitea_url__60_v0() {
     return 0
 }
 
+git_auth__61_v0() {
+    local login_key=$1
+    ret_git_auth61_v0="http.extraHeader=Authorization: Basic ${login_key}"
+    return 0
+}
+
 declare -r args_4=("$0" "$@")
 __length_4=("${args_4[@]}")
 if [ "$(( ${#__length_4[@]} < 2 ))" != 0 ]; then
@@ -103,9 +109,11 @@ password_7="${ret_password58_v0}"
 command_6="$(echo -n "${username_6}:${password_7}" | base64)"
 __status=$?
 login_key_8="${command_6}"
+git_auth__61_v0 "${login_key_8}"
+ret_git_auth61_v0__24_16="${ret_git_auth61_v0}"
 gitea_url__60_v0 
-ret_gitea_url60_v0__24_73="${ret_gitea_url60_v0}"
-git -c http.extraHeader="Authorization: Basic ${login_key_8}" clone ${ret_gitea_url60_v0__24_73}/${args_4[1]}
+ret_gitea_url60_v0__24_45="${ret_gitea_url60_v0}"
+git -c "${ret_git_auth61_v0__24_16}" clone ${ret_gitea_url60_v0__24_45}/${args_4[1]}
 __status=$?
 if [ "${__status}" = 0 ]; then
     exit 0

@@ -1,5 +1,6 @@
 import { trim } from "std/text"
-import { username, password, gitea_url, repo_root, err } from "const.ab"
+import { array_shift } from "std/array"
+import * from "const.ab"
 
 main(args) {
     let repo_root = repo_root() failed:
@@ -15,6 +16,9 @@ main(args) {
 
     const login_key = trust $ echo -n "{username}:{password}" | base64 $
 
-    $ git -c http.extraHeader="Authorization: Basic {login_key}" push {args} $ succeeded:
+    let git_args = args
+    trust array_shift(git_args)
+
+    $ git -c "{git_auth(login_key)}" push {git_args} $ succeeded:
         exit 0
 }
