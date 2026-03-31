@@ -6,39 +6,46 @@
 split__5_v0() {
     local text=$1
     local delimiter=$2
-    result_8=()
-    IFS="${delimiter}" read -rd '' -a result_8 < <(printf %s "$text")
-    ret_split5_v0=("${result_8[@]}")
+    result_9=()
+    IFS="${delimiter}" read -rd '' -a result_9 < <(printf %s "$text")
+    __status=$?
+    ret_split5_v0=("${result_9[@]}")
     return 0
 }
 
 text_contains__17_v0() {
     local source=$1
     local search=$2
-    result_14="$(if [[ "${source}" == *"${search}"* ]]; then
+    command_1="$(if [[ "${source}" == *"${search}"* ]]; then
     echo 1
   fi)"
-    ret_text_contains17_v0="$([ "_${result_14}" != "_1" ]; echo $?)"
+    __status=$?
+    result_15="${command_1}"
+    ret_text_contains17_v0="$([ "_${result_15}" != "_1" ]; echo $?)"
     return 0
 }
 
 starts_with__23_v0() {
     local text=$1
     local prefix=$2
-    result_7="$(if [[ "${text}" == "${prefix}"* ]]; then
+    command_2="$(if [[ "${text}" == "${prefix}"* ]]; then
     echo 1
   fi)"
-    ret_starts_with23_v0="$([ "_${result_7}" != "_1" ]; echo $?)"
+    __status=$?
+    result_8="${command_2}"
+    ret_starts_with23_v0="$([ "_${result_8}" != "_1" ]; echo $?)"
     return 0
 }
 
 ends_with__24_v0() {
     local text=$1
     local suffix=$2
-    result_15="$(if [[ "${text}" == *"${suffix}" ]]; then
+    command_3="$(if [[ "${text}" == *"${suffix}" ]]; then
     echo 1
   fi)"
-    ret_ends_with24_v0="$([ "_${result_15}" != "_1" ]; echo $?)"
+    __status=$?
+    result_16="${command_3}"
+    ret_ends_with24_v0="$([ "_${result_16}" != "_1" ]; echo $?)"
     return 0
 }
 
@@ -54,44 +61,71 @@ slice__25_v0() {
         ret_slice25_v0=""
         return 0
     fi
-    ret_slice25_v0="$(printf "%.${length}s" "${text: ${index}}")"
+    command_5="$(printf "%.${length}s" "${text: ${index}}")"
+    __status=$?
+    ret_slice25_v0="${command_5}"
     return 0
 }
 
-declare -r args_3=("$0" "$@")
-remote_url_4="$(git remote get-url origin)"
-browser_url_5=""
-browser_6="xdg-open"
-starts_with__23_v0 "${remote_url_4}" "https://"
-ret_starts_with23_v0__12_9="${ret_starts_with23_v0}"
-starts_with__23_v0 "${remote_url_4}" "ssh:"
-ret_starts_with23_v0__13_9="${ret_starts_with23_v0}"
-if [ "${ret_starts_with23_v0__12_9}" != 0 ]; then
-    browser_url_5="${remote_url_4}"
-elif [ "${ret_starts_with23_v0__13_9}" != 0 ]; then
-    split__5_v0 "${remote_url_4}" "/"
-    components_9=("${ret_split5_v0[@]}")
-    domain_10="${components_9[2]}"
-    user_org_11="${components_9[3]}"
-    repo_12="${components_9[4]}"
-    lf_git_13="git.lunarflame.dev"
-    text_contains__17_v0 "${domain_10}" "${lf_git_13}"
-    ret_text_contains17_v0__21_16="${ret_text_contains17_v0}"
-    if [ "${ret_text_contains17_v0__21_16}" != 0 ]; then
-        domain_10="${lf_git_13}"
+err__125_v0() {
+    local message=$1
+    echo "${message}"
+    exit 1
+}
+
+repo_root__127_v0() {
+    command_6="$(git rev-parse --show-toplevel >/dev/null 2>&1)"
+    __status=$?
+    if [ "${__status}" != 0 ]; then
+        ret_repo_root127_v0=''
+        return "${__status}"
     fi
-    ends_with__24_v0 "${repo_12}" ".git"
-    ret_ends_with24_v0__25_16="${ret_ends_with24_v0}"
-    if [ "${ret_ends_with24_v0__25_16}" != 0 ]; then
-        __length_8="${repo_12}"
-        slice__25_v0 "${repo_12}" 0 "$(( ${#__length_8} - 4 ))"
-        repo_12="${ret_slice25_v0}"
-    fi
-    browser_url_5="https://${domain_10}/${user_org_11}/${repo_12}"
-fi
-echo "Opening ${browser_url_5}..."
-${browser_6} ${browser_url_5}
+    ret_repo_root127_v0="${command_6}"
+    return 0
+}
+
+declare -r args_4=("$0" "$@")
+repo_root__127_v0 
 __status=$?
 if [ "${__status}" != 0 ]; then
-    echo "Could not open url."
+    err__125_v0 "Not inside a Git repository. Aborting."
+fi
+command_8="$(git remote get-url origin)"
+__status=$?
+remote_url_5="${command_8}"
+browser_url_6=""
+browser_7="xdg-open"
+starts_with__23_v0 "${remote_url_5}" "https://"
+ret_starts_with23_v0__18_9="${ret_starts_with23_v0}"
+starts_with__23_v0 "${remote_url_5}" "ssh:"
+ret_starts_with23_v0__19_9="${ret_starts_with23_v0}"
+if [ "${ret_starts_with23_v0__18_9}" != 0 ]; then
+    browser_url_6="${remote_url_5}"
+elif [ "${ret_starts_with23_v0__19_9}" != 0 ]; then
+    split__5_v0 "${remote_url_5}" "/"
+    components_10=("${ret_split5_v0[@]}")
+    domain_11="${components_10[2]}"
+    user_org_12="${components_10[3]}"
+    repo_13="${components_10[4]}"
+    lf_git_14="git.lunarflame.dev"
+    text_contains__17_v0 "${domain_11}" "${lf_git_14}"
+    ret_text_contains17_v0__27_16="${ret_text_contains17_v0}"
+    if [ "${ret_text_contains17_v0__27_16}" != 0 ]; then
+        domain_11="${lf_git_14}"
+    fi
+    ends_with__24_v0 "${repo_13}" ".git"
+    ret_ends_with24_v0__30_16="${ret_ends_with24_v0}"
+    if [ "${ret_ends_with24_v0__30_16}" != 0 ]; then
+        __length_9="${repo_13}"
+        slice__25_v0 "${repo_13}" 0 "$(( ${#__length_9} - 4 ))"
+        repo_13="${ret_slice25_v0}"
+    fi
+    browser_url_6="https://${domain_11}/${user_org_12}/${repo_13}"
+fi
+echo "Opening ${browser_url_6}..."
+${browser_7} ${browser_url_6} >/dev/null 2>&1
+__status=$?
+if [ "${__status}" != 0 ]; then
+code_17="${__status}"
+    err__125_v0 "Could not open url: ${code_17}"
 fi

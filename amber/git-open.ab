@@ -1,7 +1,13 @@
 import { env_var_get } from "std/env"
 import { starts_with, ends_with, split, slice, text_contains } from "std/text"
 
+import { repo_root, err } from "const.ab" 
+
 main(args) {
+
+    repo_root() failed:
+        err("Not inside a Git repository. Aborting.")
+
     const remote_url = trust $ git remote get-url origin $
 
     let browser_url = ""
@@ -18,20 +24,17 @@ main(args) {
             let repo = components[4]
 
             const lf_git = "git.lunarflame.dev"
-            if text_contains(domain, lf_git) {
+            if text_contains(domain, lf_git):
                 domain = lf_git
-            }
 
-            if ends_with(repo, ".git") {
+            if ends_with(repo, ".git"):
                 repo = slice(repo, 0, len(repo) - 4)
-            }
 
             browser_url = "https://{domain}/{user_org}/{repo}"
         }
     }
 
     echo "Opening {browser_url}..."
-    $ {browser} {browser_url} $ failed {
-        echo "Could not open url."
-    }
+    silent $ {browser} {browser_url} $ failed(code):
+        err("Could not open url: {code}")
 }

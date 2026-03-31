@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+
 echo "This repo will add git commands to help interface with the LunarFlame Git Server."
 echo "Where are your Gitea Projects stored?"
 

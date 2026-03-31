@@ -1,5 +1,5 @@
 import { trim, split, lowercase, slice, char_at, text_contains, join } from "std/text"
-import { repo_root } from "const.ab"
+import { repo_root, err } from "const.ab"
 
 const GREEN = "\\033[0;32m"
 const YELLOW = "\\033[0;33m"
@@ -21,27 +21,24 @@ fun print_section(title: Text, color: Text, symbol: Text, files: [Text]) {
     )
     trust $ echo -e "    {title_str}" $
 
-    if len(files) > 0 {
-        for file in files {
+    if len(files) > 0:
+        for file in files:
             echo "        {symbol} {file}"
-        }
-    } else {
-        echo "        (none)"
-    }
+
+    else: echo "        (none)"
 }
 
 main(args) {
-    let repo_root = repo_root() failed {
-        echo "Not inside a Git repository. Aborting."
-        exit 1
-    }
+    let repo_root = repo_root() failed:
+        err("Not inside a Git repository. Aborting.")
 
     $ cd {trim(repo_root)} $?
 
-    let repo_name = $ basename {repo_root} $ failed {
-        echo "Failed to determine repository name."
-        exit 1
-    }
+    let repo_name = $ basename {repo_root} $ failed:
+        err("Failed to determine repository name.")
+
+    let branch_name = $ git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null $ failed:
+        err("Failed to determine repository branch.")
 
     trust $ git add . $
 
@@ -52,9 +49,8 @@ main(args) {
     let deleted_files = [Text]
 
     for line in split(changes, "\n") {
-        if trim(line) == "" {
-            continue
-        }
+
+        if trim(line) == "": continue
 
         let file_status = slice(line, 0, 2)
         let entry = slice(line, 3)
@@ -62,9 +58,8 @@ main(args) {
         if {
             char_at(file_status, 0) == "R" {
                 let parts = split(entry, " -> ")
-                if len(parts) == 2 {
+                if len(parts) == 2:
                     modified_files += ["{parts[0]} --> {parts[1]}"]
-                }
             }
             text_contains(file_status, "A"): added_files += [entry]
             text_contains(file_status, "M"): modified_files += [entry]
@@ -74,7 +69,7 @@ main(args) {
 
     trust $ git restore --staged . $
 
-    echo "{trim(repo_name)}"
+    echo "{trim(repo_name)} ({trim(branch_name)})"
 
     print_section("Added Files", GREEN, "+", added_files)
     print_section("Modified Files", YELLOW, "~", modified_files)

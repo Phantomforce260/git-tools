@@ -41,66 +41,71 @@ file_read__39_v0() {
 }
 
 path_3="/home/adrian/.config/git-tools"
-repo_root__53_v0() {
-    command_3="$(git rev-parse --show-toplevel)"
+err__53_v0() {
+    local message=$1
+    echo "${message}"
+    exit 1
+}
+
+repo_root__55_v0() {
+    command_3="$(git rev-parse --show-toplevel >/dev/null 2>&1)"
     __status=$?
     if [ "${__status}" != 0 ]; then
-        ret_repo_root53_v0=''
+        ret_repo_root55_v0=''
         return "${__status}"
     fi
-    ret_repo_root53_v0="${command_3}"
+    ret_repo_root55_v0="${command_3}"
     return 0
 }
 
-username__54_v0() {
+username__56_v0() {
     file_read__39_v0 "${path_3}/secrets/username.txt"
     __status=$?
     if [ "${__status}" != 0 ]; then
-        ret_username54_v0=''
+        ret_username56_v0=''
         return "${__status}"
     fi
-    ret_username54_v0="${ret_file_read39_v0}"
+    ret_username56_v0="${ret_file_read39_v0}"
     return 0
 }
 
-password__55_v0() {
+password__57_v0() {
     file_read__39_v0 "${path_3}/secrets/password.txt"
     __status=$?
     if [ "${__status}" != 0 ]; then
-        ret_password55_v0=''
+        ret_password57_v0=''
         return "${__status}"
     fi
-    ret_password55_v0="${ret_file_read39_v0}"
+    ret_password57_v0="${ret_file_read39_v0}"
     return 0
 }
 
 declare -r args_4=("$0" "$@")
-repo_root__53_v0 
+repo_root__55_v0 
 __status=$?
 if [ "${__status}" != 0 ]; then
-    echo "Not inside a Git repository. Aborting."
-    exit 1
+    err__53_v0 "Not inside a Git repository. Aborting."
 fi
-repo_root_5="${ret_repo_root53_v0}"
+repo_root_5="${ret_repo_root55_v0}"
 trim__11_v0 "${repo_root_5}"
-ret_trim11_v0__10_11="${ret_trim11_v0}"
-cd ${ret_trim11_v0__10_11}
+ret_trim11_v0__8_11="${ret_trim11_v0}"
+cd ${ret_trim11_v0__8_11}
 __status=$?
 if [ "${__status}" != 0 ]; then
     exit "${__status}"
 fi
-username__54_v0 
+username__56_v0 
 __status=$?
 if [ "${__status}" != 0 ]; then
-    echo "Could not read username."
+    err__53_v0 "Could not read username."
 fi
-username_6="${ret_username54_v0}"
-password__55_v0 
+username_6="${ret_username56_v0}"
+password__57_v0 
 __status=$?
 if [ "${__status}" != 0 ]; then
-    echo "Could not read password."
+    err__53_v0 "Could not read password."
 fi
-password_7="${ret_password55_v0}"
+password_7="${ret_password57_v0}"
 command_5="$(echo -n "${username_6}:${password_7}" | base64)"
 __status=$?
 login_key_8="${command_5}"

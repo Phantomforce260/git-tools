@@ -1,6 +1,6 @@
 import { input_prompt } from "std/env"
 import { lowercase, trim } from "std/text"
-import { repo_root } from "const.ab"
+import { repo_root, err, cancel } from "const.ab"
 
 fun clean_repo() {
     trust {
@@ -11,23 +11,18 @@ fun clean_repo() {
 }
 
 main(args) {
-    let repo_root = repo_root() failed {
-        echo "Not inside a Git repository. Aborting."
-        exit 1
-    }
+    let repo_root = repo_root() failed:
+        err("Not inside a Git repository. Aborting.")
 
     $ cd {trim(repo_root)} $?
 
     let force = len(args) > 0 and args[0] == "-y"
 
     if not force {
-        echo "This will permanently discard ALL uncommitted changes."
+        echo "This will permanently discard ALL uncommitted changes from {repo_root}."
         let input = input_prompt("Are you sure? [y/N]: ")
 
-        if lowercase(input) != "y" {
-            echo "Aborted."
-            exit 0
-        }
+        if lowercase(input) != "y": cancel("Aborted.")
     }
 
     clean_repo()

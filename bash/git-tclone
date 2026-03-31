@@ -3,93 +3,109 @@
 # version: 0.5.1-alpha
 # We cannot import `bash_version` from `env.ab` because it imports `text.ab` making a circular dependency.
 # This is a workaround to avoid that issue and the import system should be improved in the future.
+join__8_v0() {
+    local list=("${!1}")
+    local delimiter=$2
+    command_0="$(IFS="${delimiter}" ; echo "${list[*]}")"
+    __status=$?
+    ret_join8_v0="${command_0}"
+    return 0
+}
+
 starts_with__23_v0() {
     local text=$1
     local prefix=$2
-    command_0="$(if [[ "${text}" == "${prefix}"* ]]; then
+    command_1="$(if [[ "${text}" == "${prefix}"* ]]; then
     echo 1
   fi)"
     __status=$?
-    result_5="${command_0}"
+    result_5="${command_1}"
     ret_starts_with23_v0="$([ "_${result_5}" != "_1" ]; echo $?)"
     return 0
 }
 
-file_read__39_v0() {
+file_read__40_v0() {
     local path=$1
-    command_1="$(< "${path}")"
+    command_2="$(< "${path}")"
     __status=$?
     if [ "${__status}" != 0 ]; then
-        ret_file_read39_v0=''
+        ret_file_read40_v0=''
         return "${__status}"
     fi
-    ret_file_read39_v0="${command_1}"
+    ret_file_read40_v0="${command_2}"
     return 0
 }
 
 path_3="/home/adrian/.config/git-tools"
-username__54_v0() {
-    file_read__39_v0 "${path_3}/secrets/username.txt"
+err__54_v0() {
+    local message=$1
+    echo "${message}"
+    exit 1
+}
+
+username__57_v0() {
+    file_read__40_v0 "${path_3}/secrets/username.txt"
     __status=$?
     if [ "${__status}" != 0 ]; then
-        ret_username54_v0=''
+        ret_username57_v0=''
         return "${__status}"
     fi
-    ret_username54_v0="${ret_file_read39_v0}"
+    ret_username57_v0="${ret_file_read40_v0}"
     return 0
 }
 
-password__55_v0() {
-    file_read__39_v0 "${path_3}/secrets/password.txt"
+password__58_v0() {
+    file_read__40_v0 "${path_3}/secrets/password.txt"
     __status=$?
     if [ "${__status}" != 0 ]; then
-        ret_password55_v0=''
+        ret_password58_v0=''
         return "${__status}"
     fi
-    ret_password55_v0="${ret_file_read39_v0}"
+    ret_password58_v0="${ret_file_read40_v0}"
     return 0
 }
 
-gitea_url__57_v0() {
-    ret_gitea_url57_v0="https://git.lunarflame.dev"
+gitea_url__60_v0() {
+    ret_gitea_url60_v0="https://git.lunarflame.dev"
     return 0
 }
 
 declare -r args_4=("$0" "$@")
-__length_3=("${args_4[@]}")
-if [ "$(( ${#__length_3[@]} < 2 ))" != 0 ]; then
-    echo "Usage: git tclone <repository-name>"
-    exit 1
+__length_4=("${args_4[@]}")
+if [ "$(( ${#__length_4[@]} < 2 ))" != 0 ]; then
+    err__54_v0 "Usage: git tclone <repository-name>"
 fi
 # tclone should only take the repository name, not the full URL.
 # Check if the provided argument looks like a full URL
 starts_with__23_v0 "${args_4[1]}" "https://"
-ret_starts_with23_v0__13_8="${ret_starts_with23_v0}"
+ret_starts_with23_v0__11_8="${ret_starts_with23_v0}"
 starts_with__23_v0 "${args_4[1]}" "git@"
-ret_starts_with23_v0__13_44="${ret_starts_with23_v0}"
-if [ "$(( ${ret_starts_with23_v0__13_8} || ${ret_starts_with23_v0__13_44} ))" != 0 ]; then
-    echo "Please provide only the repository name, not the full URL."
-    echo "Example: git tclone Organization/Repository.git"
-    exit 1
+ret_starts_with23_v0__11_44="${ret_starts_with23_v0}"
+if [ "$(( ${ret_starts_with23_v0__11_8} || ${ret_starts_with23_v0__11_44} ))" != 0 ]; then
+    array_5=("Please provide only the repository name, not the full URL." "Example: git tclone Organization/Repository.git")
+    join__8_v0 array_5[@] "
+"
+    ret_join8_v0__12_13="${ret_join8_v0}"
+    err__54_v0 "${ret_join8_v0__12_13}"
 fi
-username__54_v0 
+username__57_v0 
 __status=$?
 if [ "${__status}" != 0 ]; then
-    echo "Could not read username."
+    err__54_v0 "Could not read username."
 fi
-username_6="${ret_username54_v0}"
-password__55_v0 
+username_6="${ret_username57_v0}"
+password__58_v0 
 __status=$?
 if [ "${__status}" != 0 ]; then
-    echo "Could not read password."
+    err__54_v0 "Could not read password."
 fi
-password_7="${ret_password55_v0}"
-command_4="$(echo -n "${username_6}:${password_7}" | base64)"
+password_7="${ret_password58_v0}"
+command_6="$(echo -n "${username_6}:${password_7}" | base64)"
 __status=$?
-login_key_8="${command_4}"
-gitea_url__57_v0 
-ret_gitea_url57_v0__28_73="${ret_gitea_url57_v0}"
-git -c http.extraHeader="Authorization: Basic ${login_key_8}" clone ${ret_gitea_url57_v0__28_73}/${args_4[1]}
+login_key_8="${command_6}"
+gitea_url__60_v0 
+ret_gitea_url60_v0__24_73="${ret_gitea_url60_v0}"
+git -c http.extraHeader="Authorization: Basic ${login_key_8}" clone ${ret_gitea_url60_v0__24_73}/${args_4[1]}
 __status=$?
 if [ "${__status}" = 0 ]; then
     exit 0

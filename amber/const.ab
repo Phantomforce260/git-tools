@@ -2,8 +2,18 @@ import { file_read } from "std/fs"
 
 const path = "/home/adrian/.config/git-tools"
 
+pub fun err(message: Text) {
+    echo message
+    exit 1
+}
+
+pub fun cancel(message: Text) {
+    echo message
+    exit 0
+}
+
 pub fun repo_root() {
-    return $ git rev-parse --show-toplevel $?
+    return silent $ git rev-parse --show-toplevel $?
 }
 
 pub fun username() {
