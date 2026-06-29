@@ -20,3 +20,6 @@ ssh yabbashah $CMD
 
 echo "tziah:"
 ssh tziah $CMD
+
+echo "tartarus:"
+ssh tartarus "$DTF_CMD && $GT_CMD && $NV_CMD"
