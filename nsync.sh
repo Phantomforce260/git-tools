@@ -7,19 +7,25 @@ DTF_CMD="(echo dotfiles: && cd ~/.config/dotfiles && $PULL)"
 GT_CMD="(echo git-tools: && cd ~/.config/git-tools && $PULL)"
 NV_CMD="(echo nvim: && cd ~/.config/nvim && $PULL)"
 
-CMD="$DCF_CMD && $DTF_CMD && $GT_CMD && $NV_CMD"
+BASE_CMD="$DTF_CMD && $GT_CMD && $NV_CMD"
+CMD="$DCF_CMD && $BASE_CMD"
 
-echo "thebel:"
-ssh thebel $CMD
+echo "VMs:"
+echo ""
 
-echo "arqa:"
-ssh arqa $CMD
+for vm in thebel arqa yabbashah tziah; do
+    echo "${vm}:"
+    ssh $vm $CMD || echo "SSH to $vm failed."
+    echo ""
+done
 
-echo "yabbashah:"
-ssh yabbashah $CMD
+echo "Hosts:"
+echo ""
 
-echo "tziah:"
-ssh tziah $CMD
+for host in tartarus lunarflame.dev raspberrypi; do
+    echo "${host}:"
+    ssh $host $BASE_CMD || echo "SSH to $host failed."
+    echo ""
+done
 
-echo "tartarus:"
-ssh tartarus "$DTF_CMD && $GT_CMD && $NV_CMD"
+echo "Done."
