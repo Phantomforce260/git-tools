@@ -22,9 +22,8 @@ main(args) {
             let user_org = components[3]
             let repo = components[4]
 
-            const lf_git = "git.lunarflame.dev"
-            if text_contains(domain, lf_git):
-                domain = lf_git
+            if text_contains(domain, "lunarflame.dev"):
+                domain = "git.lunarflame.dev"
 
             if ends_with(repo, ".git"):
                 repo = slice(repo, 0, len(repo) - 4)

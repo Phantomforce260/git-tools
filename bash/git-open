@@ -20,8 +20,8 @@ text_contains__17_v0() {
     echo 1
   fi)"
     __status=$?
-    result_15="${command_1}"
-    ret_text_contains17_v0="$([ "_${result_15}" != "_1" ]; echo $?)"
+    result_14="${command_1}"
+    ret_text_contains17_v0="$([ "_${result_14}" != "_1" ]; echo $?)"
     return 0
 }
 
@@ -44,8 +44,8 @@ ends_with__24_v0() {
     echo 1
   fi)"
     __status=$?
-    result_16="${command_3}"
-    ret_ends_with24_v0="$([ "_${result_16}" != "_1" ]; echo $?)"
+    result_15="${command_3}"
+    ret_ends_with24_v0="$([ "_${result_15}" != "_1" ]; echo $?)"
     return 0
 }
 
@@ -107,15 +107,14 @@ elif [ "${ret_starts_with23_v0__18_9}" != 0 ]; then
     domain_11="${components_10[2]}"
     user_org_12="${components_10[3]}"
     repo_13="${components_10[4]}"
-    lf_git_14="git.lunarflame.dev"
-    text_contains__17_v0 "${domain_11}" "${lf_git_14}"
-    ret_text_contains17_v0__26_16="${ret_text_contains17_v0}"
-    if [ "${ret_text_contains17_v0__26_16}" != 0 ]; then
-        domain_11="${lf_git_14}"
+    text_contains__17_v0 "${domain_11}" "lunarflame.dev"
+    ret_text_contains17_v0__25_16="${ret_text_contains17_v0}"
+    if [ "${ret_text_contains17_v0__25_16}" != 0 ]; then
+        domain_11="git.lunarflame.dev"
     fi
     ends_with__24_v0 "${repo_13}" ".git"
-    ret_ends_with24_v0__29_16="${ret_ends_with24_v0}"
-    if [ "${ret_ends_with24_v0__29_16}" != 0 ]; then
+    ret_ends_with24_v0__28_16="${ret_ends_with24_v0}"
+    if [ "${ret_ends_with24_v0__28_16}" != 0 ]; then
         __length_9="${repo_13}"
         slice__25_v0 "${repo_13}" 0 "$(( ${#__length_9} - 4 ))"
         repo_13="${ret_slice25_v0}"
@@ -126,6 +125,6 @@ echo "Opening ${browser_url_6}..."
 ${browser_7} ${browser_url_6} >/dev/null 2>&1
 __status=$?
 if [ "${__status}" != 0 ]; then
-code_17="${__status}"
-    err__125_v0 "Could not open url: ${code_17}"
+code_16="${__status}"
+    err__125_v0 "Could not open url: ${code_16}"
 fi
